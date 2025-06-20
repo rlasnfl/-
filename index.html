@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>야구 구단주 시뮬레이션</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Bebas Neue', sans-serif;
+      background-color: #1c3d2e;
+      color: #ffffff;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      color: #f7e05f;
+      text-align: center;
+    }
+    #text {
+      font-size: 24px;
+      margin-bottom: 30px;
+      text-align: center;
+      white-space: pre-line;
+    }
+    .choice {
+      display: block;
+      margin: 12px auto;
+      padding: 14px 24px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 20px;
+      width: 80%;
+      transition: background 0.2s;
+    }
+    .choice:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>야구 구단주 시뮬레이션</h1>
+  <p id="text"></p>
+  <div id="choices"></div>
+
+  <script>
+    const story = {
+      intro: {
+        text: `📅 시즌 개막 전\n\n당신은 새롭게 창단된 야구팀의 구단주입니다.  
+예산은 넉넉하지 않고, 팬들도 많지 않습니다.  
+하지만 목표는 단 하나 — 우승!\n\n이제 본격적인 시즌 운영을 시작합니다.`,
+        choices: [
+          { text: "➡ 첫 결정 내리기", next: "start" }
+        ]
+      },
+      start: {
+        text: "첫 결정을 내려주세요.",
+        choices: [
+          { text: "⭐ 스타 선수 영입", next: "recruit" },
+          { text: "📢 마케팅 집중", next: "marketing" },
+          { text: "🏟️ 구장 개선", next: "stadium" }
+        ]
+      },
+      recruit: {
+        text: "스타 선수를 영입했습니다! 팬들이 열광합니다!",
+        choices: [{ text: "계속", next: "coach" }]
+      },
+      marketing: {
+        text: "마케팅 캠페인이 성공적이었습니다. 팬 수가 늘어났습니다!",
+        choices: [{ text: "계속", next: "coach" }]
+      },
+      stadium: {
+        text: "구장을 개선하여 관중 수가 증가했습니다!",
+        choices: [{ text: "계속", next: "coach" }]
+      },
+      coach: {
+        text: "📉 감독의 부진... 경질하시겠습니까?",
+        choices: [
+          { text: "⚡ 감독 경질", next: "newCoach" },
+          { text: "💼 감독 유지", next: "keepCoach" }
+        ]
+      },
+      newCoach: {
+        text: "새 감독이 선임되었지만 팀은 혼란에 빠졌습니다... 결과는 좋지 않았습니다.",
+        choices: [{ text: "계속", next: "failEnding" }]
+      },
+      keepCoach: {
+        text: "감독을 신뢰하고 유지했습니다. 팀이 안정되며 분위기가 좋아졌습니다.",
+        choices: [{ text: "계속", next: "event" }]
+      },
+      event: {
+        text: "시즌 중반. 어떤 전략에 집중하시겠습니까?",
+        choices: [
+          { text: "👦 청소년 팬 이벤트", next: "event1" },
+          { text: "💪 선수 체력 관리", next: "event2" }
+        ]
+      },
+      event1: {
+        text: "청소년 팬 이벤트로 젊은 팬층이 늘었습니다.",
+        choices: [{ text: "계속", next: "final" }]
+      },
+      event2: {
+        text: "체력 관리를 통해 팀 경기력이 향상되었습니다.",
+        choices: [{ text: "계속", next: "final" }]
+      },
+      final: {
+        text: "⚾ 정규시즌 마지막 경기\n6:6, 9회말 2사 만루 상황!\n대타를 투입하시겠습니까?",
+        choices: [
+          { text: "🎯 대타 투입", next: "win" },
+          { text: "🧍 그대로 간다", next: "lose" }
+        ]
+      },
+      win: {
+        text: "대타가 나섭니다... 안타! 역전승으로 시즌 우승을 차지했습니다!! 🎉🏆",
+        choices: [{ text: "🔁 다시 시작하기", next: "intro" }]
+      },
+      lose: {
+        text: "기존 타자가 나섰지만 삼진... 경기를 패배했습니다. 시즌 종료. 😢",
+        choices: [{ text: "🔁 다시 시작하기", next: "intro" }]
+      },
+      failEnding: {
+        text: "감독 경질 후 팀은 방향을 잃고, 시즌 막판에 무너졌습니다...\n우승은 물 건너갔습니다. 😓",
+        choices: [{ text: "🔁 다시 시작하기", next: "intro" }]
+      }
+    };
+
+    let current = "intro";
+
+    function renderScene() {
+      const scene = story[current];
+      document.getElementById("text").textContent = scene.text;
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+      scene.choices.forEach(choice => {
+        const button = document.createElement("button");
+        button.textContent = choice.text;
+        button.className = "choice";
+        button.onclick = () => {
+          current = choice.next;
+          renderScene();
+        };
+        choicesDiv.appendChild(button);
+      });
+    }
+
+    renderScene();
+  </script>
+</body>
+</html>
